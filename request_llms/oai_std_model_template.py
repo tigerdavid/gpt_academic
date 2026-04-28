@@ -76,9 +76,10 @@ def decode_chunk(chunk):
     return response, reasoning_content, finish_reason, str(chunk)
 
 
-def generate_message(input, model, key, history, max_output_token, system_prompt, temperature):
+def generate_message(input, model, key, history, max_output_token, system_prompt, temperature, extra_body=None):
     """
     整合所有信息，选择LLM模型，生成http请求，为发送请求做准备
+    - extra_body: 可选的额外请求体参数（如 DeepSeek V4 的 thinking）
     """
     api_key = f"Bearer {key}"
 
@@ -115,6 +116,8 @@ def generate_message(input, model, key, history, max_output_token, system_prompt
         "stream": True,
         "max_tokens": max_output_token,
     }
+    if extra_body:
+        payload.update(extra_body)
 
     return headers, payload
 
@@ -185,6 +188,7 @@ def get_predict_function(
             max_output_token=max_output_token,
             system_prompt=sys_prompt,
             temperature=llm_kwargs["temperature"],
+            extra_body=model_info[llm_kwargs['llm_model']].get('extra_body'),
         )
 
         reasoning = model_info[llm_kwargs['llm_model']].get('enable_reasoning', False)
@@ -321,6 +325,7 @@ def get_predict_function(
             max_output_token=max_output_token,
             system_prompt=system_prompt,
             temperature=llm_kwargs["temperature"],
+            extra_body=model_info[llm_kwargs['llm_model']].get('extra_body'),
         )
 
         reasoning = model_info[llm_kwargs['llm_model']].get('enable_reasoning', False)
