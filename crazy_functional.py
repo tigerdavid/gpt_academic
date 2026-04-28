@@ -55,6 +55,7 @@ def get_crazy_functions():
     from crazy_functions.Conversation_Manager import 对话管理, 加载对话, 删除对话, 导出对话, 开始新对话
     from crazy_functions.Hot_Reload_Config import 刷新模型配置, Token统计
     from crazy_functions.Smart_File_Analysis import 智能分析文件, 文件列表
+    from crazy_functions.AI_Settings_Assistant import AI设置助手
 
 
     function_plugins = {
@@ -813,12 +814,12 @@ def get_crazy_functions():
             "Info": "上传文件后点击，自动识别类型并分析（支持PDF/Word/代码/图片/音视频等）",
             "Function": HotReload(智能分析文件),
         },
-        "文件列表": {
+        "AI设置助手": {
             "Group": "对话",
-            "Color": "secondary",
+            "Color": "primary",
             "AsButton": True,
-            "Info": "查看当前已上传的所有文件",
-            "Function": HotReload(文件列表),
+            "Info": "用自然语言修改软件配置：模型切换、主题、简洁模式、代理等",
+            "Function": HotReload(AI设置助手),
         },
     })
 
