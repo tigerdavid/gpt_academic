@@ -266,9 +266,15 @@ def start_app(app_block, CONCURRENT_COUNT, AUTHENTICATION, PORT, SSL_KEYFILE, SS
 
         @fastapi_app.middleware("http")
         async def middleware(request: Request, call_next):
-            if request.scope['path'] in ["/docs", "/redoc", "/openapi.json"]:
+            path = request.scope['path']
+            if path in ["/docs", "/redoc", "/openapi.json"]:
                 return JSONResponse(status_code=404, content={"message": "Not Found"})
             response = await call_next(request)
+            # Cache static assets aggressively (Gradio JS bundle = 4.5MB)
+            if path.startswith('/assets/') or path.startswith('/static/'):
+                response.headers['Cache-Control'] = 'public, max-age=86400, immutable'
+            elif any(path.endswith(ext) for ext in ('.js', '.css', '.woff2', '.png', '.svg', '.ico')):
+                response.headers['Cache-Control'] = 'public, max-age=3600'
             return response
 
 
