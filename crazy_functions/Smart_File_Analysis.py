@@ -9,18 +9,19 @@ from toolbox import update_ui, report_exception, get_log_folder, get_conf
 from loguru import logger
 
 
+# Map file extensions to actual gpt_academic plugin names
 FILE_TYPE_MAP = {
-    ('.pdf',): '解析PDF',
-    ('.docx', '.doc', '.odt'): '解析Word',
-    ('.pptx', '.ppt'): '解析PPT',
-    ('.xlsx', '.xls', '.csv'): '解析Excel',
-    ('.py', '.js', '.ts', '.java', '.go', '.rs', '.cpp', '.c', '.h', '.rb', '.php', '.sh'): '代码审阅',
-    ('.md', '.txt', '.rst', '.tex'): '总结文章',
-    ('.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp'): '图片解读',
-    ('.mp3', '.wav', '.ogg', '.flac', '.m4a'): '音频转写',
-    ('.mp4', '.avi', '.mov', '.mkv', '.webm'): '视频总结',
-    ('.json', '.yaml', '.yml', '.toml', '.ini', '.cfg'): '代码审阅',
-    ('.zip', '.tar', '.gz', '.7z', '.rar'): '压缩包解包',
+    ('.pdf',): '理解PDF文档内容 （模仿ChatPDF）',
+    ('.docx', '.doc', '.odt'): '批量总结Word文档',
+    ('.pptx', '.ppt'): '理解PDF文档内容 （模仿ChatPDF）',  # same analysis works for ppt
+    ('.xlsx', '.xls', '.csv'): '批量总结Word文档',
+    ('.py', '.js', '.ts', '.java', '.go', '.rs', '.cpp', '.c', '.h', '.rb', '.php', '.sh'): '解析项目源代码（手动指定和筛选源代码文件类型）',
+    ('.md', '.txt', '.rst', '.tex'): '理解PDF文档内容 （模仿ChatPDF）',
+    ('.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp'): None,  # 图片解读需特殊处理
+    ('.mp3', '.wav', '.ogg', '.flac', '.m4a'): None,  # 音频转写需特殊处理
+    ('.mp4', '.avi', '.mov', '.mkv', '.webm'): None,  # 视频总结需特殊处理
+    ('.json', '.yaml', '.yml', '.toml', '.ini', '.cfg'): '解析项目源代码（手动指定和筛选源代码文件类型）',
+    ('.zip', '.tar', '.gz', '.7z', '.rar'): None,  # 需要解压
 }
 
 
@@ -84,34 +85,14 @@ def 智能分析文件(txt: str, llm_kwargs, plugin_kwargs, chatbot, history, sy
             files_str += f"\n... 共 {len(recent)} 个文件"
         
         if detected_plugin:
-            # Try to execute the detected plugin
-            info = f"## 🔍 智能分析\n\n检测到文件：\n{files_str}\n\n类型：**{detected_plugin}** → 自动执行分析..."
-            
+            # Show detection result
+            info = f"## 🔍 智能分析\n\n检测到文件：\n{files_str}\n\n类型：`{ext}` → 建议使用 **{detected_plugin}**"
             chatbot.append([f"智能分析上传文件", info])
             yield from update_ui(chatbot=chatbot, history=history)
-            
-            # Call the matching plugin via bridge
-            try:
-                from crazy_functional import get_crazy_functions
-                plugins = get_crazy_functions()
-                
-                if detected_plugin in plugins and hasattr(plugins[detected_plugin], 'get') and \
-                   plugins[detected_plugin].get("Function"):
-                    plugin_fn = plugins[detected_plugin]["Function"]
-                    
-                    # Set the file path as input text
-                    # Pass the first file path as input
-                    file_path = recent[0]
-                    yield from plugin_fn(file_path, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, user_request)
-                else:
-                    # Fallback: use the text input with file path
-                    chatbot.append([f"未找到插件 {detected_plugin}", f"请手动选择插件处理文件。\n文件路径：{recent[0]}"])
-                    yield from update_ui(chatbot=chatbot, history=history)
-            except Exception as e:
-                report_exception(chatbot, history, str(e), f"执行插件 {detected_plugin} 失败")
-                yield from update_ui(chatbot=chatbot, history=history)
         else:
-            chatbot.append([f"智能分析", f"📄 文件：\n{files_str}\n\n⚠️ 未知文件类型（{ext}），请手动选择插件分析。"])
+            # Unknown file type - show suggestion
+            info = f"## 📄 文件检测\n\n{files_str}\n\n类型 `{ext}` 未匹配到专用插件。\n\n💡 建议：直接输入问题并在对话中讨论此文件，或手动选择插件。"
+            chatbot.append(["智能分析", info])
             yield from update_ui(chatbot=chatbot, history=history)
 
     except Exception as e:
