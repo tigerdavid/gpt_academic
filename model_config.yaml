@@ -1,0 +1,160 @@
+# ============================================================
+# GPT Academic - Model Configuration
+# ============================================================
+# Add models here instead of editing config.py + bridge_all.py.
+# Each model needs: name, provider, and provider-specific fields.
+#
+# Supported providers:
+#   openai_compatible  - Any OpenAI-compatible API
+#   google_gemini      - Google Gemini API
+#   zhipu              - Zhipu AI (ChatGLM)
+#   qwen_dashscope     - Alibaba DashScope (Qwen series)
+#   anthropic           - Anthropic Claude (via Anthropic API format)
+#   moonshot            - Moonshot/Kimi
+#   cohere              - Cohere Command R
+# ============================================================
+
+models:
+  # --- DeepSeek V4 (Official API) ---
+  - name: deepseek-v4-flash
+    provider: openai_compatible
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1/chat/completions
+    max_context: 1000000
+    max_output: 4096
+    can_multi_thread: true
+    description: "DeepSeek V4 Flash - 日常对话/翻译/代码，1M上下文"
+
+  - name: deepseek-v4-pro
+    provider: openai_compatible
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1/chat/completions
+    max_context: 1000000
+    max_output: 4096
+    can_multi_thread: true
+    enable_reasoning: true
+    extra_body:
+      thinking:
+        type: enabled
+    description: "DeepSeek V4 Pro - 复杂推理/深度分析，1M上下文，开启思考模式"
+
+  # --- Legacy DeepSeek (will be deprecated by DeepSeek on 2026-07-24) ---
+  - name: deepseek-chat
+    provider: openai_compatible
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1/chat/completions
+    max_context: 64000
+    max_output: 4096
+    can_multi_thread: true
+    description: "DeepSeek Chat (legacy, routes to V4 Flash)"
+
+  - name: deepseek-reasoner
+    provider: openai_compatible
+    api_key_env: DEEPSEEK_API_KEY
+    base_url: https://api.deepseek.com/v1/chat/completions
+    max_context: 64000
+    max_output: 4096
+    can_multi_thread: true
+    enable_reasoning: true
+    description: "DeepSeek Reasoner (legacy, routes to V4 Flash thinking)"
+
+  # --- OpenAI ---
+  - name: gpt-4o
+    provider: openai_compatible
+    api_key_env: API_KEY
+    base_url: https://api.openai.com/v1/chat/completions
+    max_context: 128000
+    max_output: 4096
+    has_multimodal_capacity: true
+    description: "GPT-4o - 多模态，128K上下文"
+
+  - name: gpt-4o-mini
+    provider: openai_compatible
+    api_key_env: API_KEY
+    base_url: https://api.openai.com/v1/chat/completions
+    max_context: 128000
+    max_output: 4096
+    has_multimodal_capacity: true
+    can_multi_thread: true
+    description: "GPT-4o Mini - 轻量多模态"
+
+  - name: o4-mini
+    provider: openai_compatible
+    api_key_env: API_KEY
+    base_url: https://api.openai.com/v1/chat/completions
+    max_context: 200000
+    max_output: 4096
+    has_multimodal_capacity: true
+    can_multi_thread: true
+    description: "o4-mini - 推理模型"
+
+  # --- Anthropic Claude (via Anthropic API) ---
+  - name: claude-sonnet-4-6
+    provider: anthropic
+    api_key_env: ANTHROPIC_API_KEY
+    base_url: https://api.anthropic.com/v1/messages
+    max_context: 200000
+    max_output: 4096
+    has_multimodal_capacity: true
+    description: "Claude Sonnet 4.6"
+
+  # --- Google Gemini ---
+  - name: gemini-2.0-flash
+    provider: google_gemini
+    api_key_env: GEMINI_API_KEY
+    base_url: https://generativelanguage.googleapis.com/v1beta/models
+    max_context: 1048576
+    max_output: 8192
+    has_multimodal_capacity: true
+    description: "Gemini 2.0 Flash"
+
+  # --- Zhipu GLM ---
+  - name: glm-4
+    provider: zhipu
+    api_key_env: ZHIPU_API_KEY
+    max_context: 128000
+    max_output: 4096
+    description: "GLM-4"
+
+  # --- Alibaba Qwen (DashScope) ---
+  - name: qwen-max
+    provider: qwen_dashscope
+    api_key_env: DASHSCOPE_API_KEY
+    max_context: 30720
+    max_output: 4096
+    can_multi_thread: true
+    description: "Qwen Max"
+
+  # --- Moonshot / Kimi ---
+  - name: moonshot-v1-128k
+    provider: moonshot
+    api_key_env: MOONSHOT_API_KEY
+    base_url: https://api.moonshot.cn/v1/chat/completions
+    max_context: 128000
+    max_output: 4096
+    can_multi_thread: true
+    description: "Moonshot v1 128K"
+
+  # --- volcengine (via OpenAI-compatible) ---
+  - name: volcengine-deepseek-v3-241226
+    provider: openai_compatible
+    api_key_env: VOLCENGINE_API_KEY
+    base_url: https://ark.cn-beijing.volces.com/api/v3/chat/completions
+    max_context: 64000
+    max_output: 4096
+    can_multi_thread: true
+    description: "火山引擎 DeepSeek V3"
+
+# ============================================================
+# Default model (must be in the models list above)
+# ============================================================
+default_model: deepseek-v4-flash
+
+# ============================================================
+# Global settings
+# ============================================================
+global:
+  temperature: 0.5
+  timeout_seconds: 60
+  max_retry: 2
+  stream: true

@@ -1436,6 +1436,20 @@ for model in [m for m in AVAIL_LLM_MODELS if m.startswith("openrouter-")]:
     })
 
 
+# -=-=-=-=-=-=- YAML 模型配置加载 -=-=-=-=-=-=-
+try:
+    from shared_utils.model_config_loader import load_models
+    yaml_models = load_models()
+    if yaml_models:
+        model_info.update(yaml_models)
+        logger.info(f"Loaded {len(yaml_models)} models from model_config.yaml")
+        # Add YAML model names to AVAIL_LLM_MODELS if not already present
+        for yaml_model_name in yaml_models.keys():
+            if yaml_model_name not in AVAIL_LLM_MODELS:
+                AVAIL_LLM_MODELS.append(yaml_model_name)
+except Exception as e:
+    logger.warning(f"Failed to load model_config.yaml: {e}")
+
 # -=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-=-=
 # -=-=-=-=-=-=-=-=-=- ☝️ 以上是模型路由 -=-=-=-=-=-=-=-=-=
 # -=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=--=-=-=-=-=-=-=-=
