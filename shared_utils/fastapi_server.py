@@ -254,6 +254,9 @@ def start_app(app_block, CONCURRENT_COUNT, AUTHENTICATION, PORT, SSL_KEYFILE, SS
 
     # --- --- FastAPI --- ---
     fastapi_app = FastAPI(lifespan=app_lifespan)
+    # GZip compress responses to reduce transfer size (Tailscale latency)
+    from starlette.middleware.gzip import GZipMiddleware
+    fastapi_app.add_middleware(GZipMiddleware, minimum_size=500)
     fastapi_app.mount(CUSTOM_PATH, gradio_app)
 
     # --- --- favicon and block fastapi api reference routes --- ---
