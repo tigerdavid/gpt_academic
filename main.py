@@ -1,17 +1,7 @@
 import os; os.environ['no_proxy'] = '*' # 避免代理网络产生意外污染
 
 help_menu_description = \
-"""Github源代码开源和更新[地址🚀](https://github.com/binary-husky/gpt_academic),
-感谢热情的[开发者们❤️](https://github.com/binary-husky/gpt_academic/graphs/contributors).
-</br></br>常见问题请查阅[项目Wiki](https://github.com/binary-husky/gpt_academic/wiki),
-如遇到Bug请前往[Bug反馈](https://github.com/binary-husky/gpt_academic/issues).
-</br></br>普通对话使用说明: 1. 输入问题; 2. 点击提交
-</br></br>基础功能区使用说明: 1. 输入文本; 2. 点击任意基础功能区按钮
-</br></br>函数插件区使用说明: 1. 输入路径/问题, 或者上传文件; 2. 点击任意函数插件区按钮
-</br></br>虚空终端使用说明: 点击虚空终端, 然后根据提示输入指令, 再次点击虚空终端
-</br></br>如何保存对话: 点击保存当前的对话按钮
-</br></br>如何语音对话: 请阅读Wiki
-</br></br>如何临时更换API_KEY: 在输入区输入临时API_KEY后提交（网页刷新后失效）"""
+"""<small>输入问题 → 点提交 | 上传文件 → 点击对应插件 | <a href="https://github.com/binary-husky/gpt_academic">GitHub</a></small>"""
 
 from loguru import logger
 def enable_log(PATH_LOGGING):
@@ -51,7 +41,7 @@ def main():
     CHATBOT_HEIGHT, LAYOUT, AVAIL_LLM_MODELS, AUTO_CLEAR_TXT = get_conf('CHATBOT_HEIGHT', 'LAYOUT', 'AVAIL_LLM_MODELS', 'AUTO_CLEAR_TXT')
     ENABLE_AUDIO, AUTO_CLEAR_TXT, AVAIL_FONTS, AVAIL_THEMES, THEME, ADD_WAIFU = get_conf('ENABLE_AUDIO', 'AUTO_CLEAR_TXT', 'AVAIL_FONTS', 'AVAIL_THEMES', 'THEME', 'ADD_WAIFU')
     NUM_CUSTOM_BASIC_BTN, SSL_KEYFILE, SSL_CERTFILE = get_conf('NUM_CUSTOM_BASIC_BTN', 'SSL_KEYFILE', 'SSL_CERTFILE')
-    DARK_MODE, INIT_SYS_PROMPT, ADD_WAIFU, TTS_TYPE = get_conf('DARK_MODE', 'INIT_SYS_PROMPT', 'ADD_WAIFU', 'TTS_TYPE')
+    DARK_MODE, INIT_SYS_PROMPT, ADD_WAIFU, TTS_TYPE, SIMPLE_UI = get_conf('DARK_MODE', 'INIT_SYS_PROMPT', 'ADD_WAIFU', 'TTS_TYPE', 'SIMPLE_UI')
     if LLM_MODEL not in AVAIL_LLM_MODELS: AVAIL_LLM_MODELS += [LLM_MODEL]
 
     # 如果WEB_PORT是-1, 则随机选取WEB端口
@@ -140,7 +130,8 @@ def main():
                             functional[k]["Button"] = gr.Button(k, variant=variant, info_str=f'基础功能区: {k}')
                             functional[k]["Button"].style(size="sm")
                             predefined_btns.update({k: functional[k]["Button"]})
-                with gr.Accordion("函数插件区", open=True, elem_id="plugin-panel") as area_crazy_fn:
+                plugin_area_open = not SIMPLE_UI
+                with gr.Accordion(f"函数插件区 {'📦' if SIMPLE_UI else ''}", open=plugin_area_open, elem_id="plugin-panel") as area_crazy_fn:
                     with gr.Row():
                         gr.Markdown("<small>插件可读取“输入区”文本/路径作为参数（上传文件自动修正路径）</small>")
                     with gr.Row(elem_id="input-plugin-group"):

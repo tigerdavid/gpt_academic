@@ -88,6 +88,9 @@ API_URL_REDIRECT = {}
 DEFAULT_WORKER_NUM = 8
 
 
+# 简洁界面模式，收起高级插件，只留核心功能
+SIMPLE_UI = False
+
 # 色彩主题, 可选 ["Default", "Chuanhu-Small-and-Beautiful", "High-Contrast"]
 # 更多主题, 请查阅Gradio主题商店: https://huggingface.co/spaces/gradio/theme-gallery 可选 ["Gstaff/Xkcd", "NoCrypt/Miku", ...]
 THEME = "Default"
@@ -156,7 +159,7 @@ MAX_RETRY = 2
 
 
 # 插件分类默认选项
-DEFAULT_FN_GROUPS = ['对话', '编程', '学术', '智能体']
+DEFAULT_FN_GROUPS = ['对话', '学术']
 
 
 # 定义界面上“询问多个GPT模型”插件应该使用哪些模型，请从AVAIL_LLM_MODELS中选择，并在不同模型之间用`&`间隔，例如"gpt-3.5-turbo&chatglm3&azure-gpt-4"
