@@ -286,7 +286,8 @@ def start_app(app_block, CONCURRENT_COUNT, AUTHENTICATION, PORT, SSL_KEYFILE, SS
         ssl_certfile=ssl_certfile,
     )
     server = Server(config)
-    url_host_name = "localhost" if server_name == "0.0.0.0" else server_name
+    # Use 0.0.0.0 instead of localhost so Gradio WebSocket works with external access
+    url_host_name = "0.0.0.0"
     if ssl_keyfile is not None:
         if ssl_certfile is None:
             raise ValueError(
