@@ -56,7 +56,6 @@ def get_crazy_functions():
     from crazy_functions.Hot_Reload_Config import 刷新模型配置, Token统计
     from crazy_functions.Smart_File_Analysis import 智能分析文件, 文件列表
     from crazy_functions.AI_Settings_Assistant import AI设置助手
-    from crazy_functions.AI_Code_Agent import AI代码助手
 
 
     function_plugins = {
@@ -821,13 +820,6 @@ def get_crazy_functions():
             "AsButton": True,
             "Info": "用自然语言修改软件配置：模型切换、主题、简洁模式、代理等",
             "Function": HotReload(AI设置助手),
-        },
-        "AI代码助手": {
-            "Group": "对话",
-            "Color": "primary",
-            "AsButton": True,
-            "Info": "直接用自然语言添加功能和修改代码，AI自动改文件、注册插件、提交git",
-            "Function": HotReload(AI代码助手),
         },
     })
 
