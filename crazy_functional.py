@@ -54,6 +54,7 @@ def get_crazy_functions():
     from crazy_functions.Document_Conversation_Wrap import Document_Conversation_Wrap
     from crazy_functions.Conversation_Manager import 对话管理, 加载对话, 删除对话, 导出对话, 开始新对话
     from crazy_functions.Hot_Reload_Config import 刷新模型配置, Token统计
+    from crazy_functions.Smart_File_Analysis import 智能分析文件, 文件列表
 
 
     function_plugins = {
@@ -804,6 +805,20 @@ def get_crazy_functions():
             "AsButton": True,
             "Info": "查看当前会话的 Token 用量和费用统计",
             "Function": HotReload(Token统计),
+        },
+        "智能分析文件": {
+            "Group": "对话",
+            "Color": "primary",
+            "AsButton": True,
+            "Info": "上传文件后点击，自动识别类型并分析（支持PDF/Word/代码/图片/音视频等）",
+            "Function": HotReload(智能分析文件),
+        },
+        "文件列表": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "查看当前已上传的所有文件",
+            "Function": HotReload(文件列表),
         },
     })
 
