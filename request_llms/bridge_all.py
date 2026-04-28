@@ -1619,8 +1619,38 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot,
     except Exception:
         pass
 
+    # ─── Token tracking: count input tokens before request ───
+    try:
+        from shared_utils.token_cost_tracker import get_tracker, count_input_tokens
+        tracker = get_tracker()
+        input_token_count = count_input_tokens(history + [inputs])
+    except Exception:
+        input_token_count = 0
+
     # 更新一下llm_kwargs的参数，否则会出现参数不匹配的问题
     yield from method(inputs, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, stream, additional_fn)
+
+    # ─── Token tracking: count output tokens after response ───
+    try:
+        if input_token_count > 0 and history and len(history) >= 1:
+            last_msg = history[-1]
+            if last_msg and isinstance(last_msg, str):
+                from shared_utils.token_cost_tracker import count_output_tokens
+                output_token_count = count_output_tokens(last_msg)
+                summary = tracker.track_request(
+                    model=llm_kwargs.get('llm_model', 'unknown'),
+                    input_tokens=input_token_count,
+                    output_tokens=output_token_count,
+                )
+                # Append cost info to last chatbot message
+                cost_info = tracker.get_cost_html()
+                if cost_info and chatbot and len(chatbot) > 0:
+                    last_entry = list(chatbot[-1])
+                    if isinstance(last_entry[1], str):
+                        last_entry[1] = last_entry[1] + cost_info
+                        chatbot[-1] = tuple(last_entry)
+    except Exception:
+        pass
 
     # ─── Auto-save: save assistant response ───
     try:

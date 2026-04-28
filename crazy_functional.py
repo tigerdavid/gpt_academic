@@ -53,6 +53,7 @@ def get_crazy_functions():
     from crazy_functions.Document_Conversation import 批量文件询问
     from crazy_functions.Document_Conversation_Wrap import Document_Conversation_Wrap
     from crazy_functions.Conversation_Manager import 对话管理, 加载对话, 删除对话, 导出对话, 开始新对话
+    from crazy_functions.Hot_Reload_Config import 刷新模型配置, Token统计
 
 
     function_plugins = {
@@ -789,6 +790,20 @@ def get_crazy_functions():
             "AsButton": True,
             "Info": "清空当前对话，开始新对话（自动保存旧对话）",
             "Function": HotReload(开始新对话),
+        },
+        "刷新模型配置": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "热加载 model_config.yaml，修改模型配置后点此刷新",
+            "Function": HotReload(刷新模型配置),
+        },
+        "Token统计": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "查看当前会话的 Token 用量和费用统计",
+            "Function": HotReload(Token统计),
         },
     })
 
