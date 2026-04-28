@@ -1608,5 +1608,25 @@ def predict(inputs:str, llm_kwargs:dict, plugin_kwargs:dict, chatbot,
     if contain_uploaded_files(inputs):
         inputs = yield from load_uploaded_files(inputs, method, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, stream, additional_fn)
 
+    # ─── Auto-save: start conversation and save user message ───
+    try:
+        from shared_utils.conv_auto_save import (
+            get_current_conv_id, start_conversation, save_user_message, save_assistant_message
+        )
+        if not get_current_conv_id():
+            start_conversation(model=llm_kwargs.get('llm_model', 'unknown'))
+        save_user_message(inputs)
+    except Exception:
+        pass
+
     # 更新一下llm_kwargs的参数，否则会出现参数不匹配的问题
     yield from method(inputs, llm_kwargs, plugin_kwargs, chatbot, history, system_prompt, stream, additional_fn)
+
+    # ─── Auto-save: save assistant response ───
+    try:
+        if history and len(history) >= 1:
+            last_msg = history[-1]
+            if last_msg and isinstance(last_msg, str):
+                save_assistant_message(last_msg)
+    except Exception:
+        pass

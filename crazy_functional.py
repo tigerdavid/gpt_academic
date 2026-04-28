@@ -52,6 +52,7 @@ def get_crazy_functions():
     from crazy_functions.VideoResource_GPT import 多媒体任务
     from crazy_functions.Document_Conversation import 批量文件询问
     from crazy_functions.Document_Conversation_Wrap import Document_Conversation_Wrap
+    from crazy_functions.Conversation_Manager import 对话管理, 加载对话, 删除对话, 导出对话, 开始新对话
 
 
     function_plugins = {
@@ -758,6 +759,38 @@ def get_crazy_functions():
             function_plugins[name]["AdvancedArgs"] = False
         if "Color" not in function_meta:
             function_plugins[name]["Color"] = "secondary"
+
+    # ─── Conversation Manager Plugins ───
+    function_plugins.update({
+        "对话管理": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "列出所有已保存的对话，支持加载、删除、导出",
+            "Function": HotReload(对话管理),
+        },
+        "加载对话": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "输入对话ID加载已保存的对话",
+            "Function": HotReload(加载对话),
+        },
+        "导出对话": {
+            "Group": "对话",
+            "Color": "secondary",
+            "AsButton": True,
+            "Info": "导出对话为Markdown文件",
+            "Function": HotReload(导出对话),
+        },
+        "开始新对话": {
+            "Group": "对话",
+            "Color": "stop",
+            "AsButton": True,
+            "Info": "清空当前对话，开始新对话（自动保存旧对话）",
+            "Function": HotReload(开始新对话),
+        },
+    })
 
     return function_plugins
 
